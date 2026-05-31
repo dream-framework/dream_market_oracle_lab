@@ -1,0 +1,24 @@
+# Expanded beta grid for s2_event_horizon_cycle.
+# Purpose: determine whether the repeated beta=0.35 result is real or only a lower-bound artifact.
+# Replace the source cycle app's beta grid with this list, then rerun the cycle workflow.
+beta_grid:
+  - 0.15
+  - 0.20
+  - 0.25
+  - 0.30
+  - 0.35
+  - 0.40
+  - 0.45
+  - 0.55
+  - 0.65
+  - 0.75
+  - 0.85
+  - 1.00
+  - 1.15
+  - 1.35
+  - 1.50
+  - 1.75
+  - 2.00
+  - 2.25
+legacy_floor: 0.35
+new_floor: 0.15

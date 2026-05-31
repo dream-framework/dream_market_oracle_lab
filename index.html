@@ -1,0 +1,132 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>DREAM Market Oracle · First-Notice Lab</title>
+  <link rel="stylesheet" href="assets/style.css" />
+</head>
+<body>
+  <main class="shell">
+    <header class="topbar">
+      <div>
+        <div class="eyebrow">DREAM / S2 / market-oracle lab</div>
+        <h1>First-Notice Filament Radar</h1>
+        <p class="sub">Strict public artifacts only. The edge is not the obvious hub; it is the small retained rumor filament growing too fast for its public footprint.</p>
+      </div>
+      <div class="status-grid">
+        <div><span>Mode</span><b id="mode">strict</b></div>
+        <div><span>Generated</span><b id="generatedAt">waiting</b></div>
+        <div><span>Poll</span><b id="pollState">10m</b></div>
+        <div><span>Theme</span><b><button id="themeBtn">Light</button></b></div>
+      </div>
+    </header>
+
+    <section id="notice" class="notice">Loading generated bundle from <code>data/derived/signal_cycle_bundle.json</code>.</section>
+
+    <section class="kpis" id="kpis"></section>
+
+    <section class="panel beta-playground is-collapsed" id="betaPlayground">
+      <div class="panel-head beta-head">
+        <div>
+          <h2>β playground</h2>
+          <span class="muted">what-if weighting only; does not refit upstream cycles</span>
+        </div>
+        <div class="beta-head-actions">
+          <span id="betaMiniRead" class="beta-mini-read">β controls collapsed</span>
+          <button id="betaToggleBtn" class="beta-toggle-btn" type="button">Expand β</button>
+        </div>
+      </div>
+      <div class="beta-controls" id="betaControls">
+        <label>Assumed β clock <input id="betaAssumed" type="range" min="0.15" max="1.00" step="0.05" value="0.35"><b id="betaAssumedValue">0.35</b></label>
+        <label>Floor-lock penalty <input id="betaPenalty" type="range" min="0" max="0.50" step="0.05" value="0.20"><b id="betaPenaltyValue">20%</b></label>
+        <div id="betaPlayRead" class="beta-play-read">Loading β controls.</div>
+      </div>
+    </section>
+
+    <section class="grid-main">
+      <section class="panel chart-panel">
+        <div class="panel-head">
+          <h2>Market oracle view</h2>
+          <div class="tabs">
+            <button class="tab active" data-tab="radar">First notice</button>
+            <button class="tab" data-tab="coupling">Coupling</button>
+            <button class="tab" data-tab="cycle">Cycle</button>
+            <button class="tab" data-tab="horizon">Horizon</button>
+            <button class="tab" data-tab="pnl">PnL audit</button>
+            <button class="tab" data-tab="beta">Beta</button>
+            <button class="tab" data-tab="backtest">Backtest</button>
+            <button class="tab" data-tab="theater">S2 Theater</button>
+            <button id="chartMaxBtn" class="tab chart-max-btn" title="Maximize or collapse the chart">Max graph</button>
+          </div>
+        </div>
+        <div id="mainChart" class="chart"></div>
+        <div id="theaterStage" class="theater-stage hidden"></div>
+        <div id="chartNarrative" class="chart-narrative"></div>
+      </section>
+
+      <aside class="panel read-panel">
+        <div class="panel-head"><h2>First-notice read</h2><button id="refreshBtn">Refresh</button></div>
+        <div id="signalRead" class="read-body"></div>
+      </aside>
+    </section>
+
+
+    <section class="panel first-notice-panel">
+      <div class="panel-head"><h2>First-Notice Filaments</h2><span class="muted">small retained narrative structures growing faster than their public footprint</span></div>
+      <div id="radarTable" class="table-wrap tall"></div>
+    </section>
+
+    <section class="wide-grid">
+      <section class="panel">
+        <div class="panel-head"><h2>Topic cycle summaries</h2><span class="muted">searchable normalized cycle JSON</span></div>
+        <div id="topicTable" class="table-wrap"></div>
+      </section>
+      <section class="panel">
+        <div class="panel-head"><h2>Market horizon ladder</h2><span class="muted" id="horizonSource">scored market artifacts</span></div>
+        <div id="horizonTable" class="table-wrap"></div>
+      </section>
+    </section>
+
+    <section class="wide-grid">
+      <section class="panel">
+        <div class="panel-head"><h2>Coupling rows</h2><span class="muted">searchable topic × scored horizon</span></div>
+        <div id="couplingTable" class="table-wrap tall"></div>
+      </section>
+      <section class="panel">
+        <div class="panel-head"><h2>Backtest reference</h2><span class="muted">model_comparison.json only</span></div>
+        <div id="backtestTable" class="table-wrap tall"></div>
+      </section>
+    </section>
+
+    <section class="wide-grid">
+      <section class="panel">
+        <div class="panel-head"><h2>Postfactum PnL audit</h2><span class="muted">paper PnL proxy from matured predictions</span></div>
+        <div id="pnlAuditTable" class="table-wrap tall"></div>
+      </section>
+      <section class="panel">
+        <div class="panel-head"><h2>β-adjusted coupling view</h2><span class="muted">what-if ranking, not a refit</span></div>
+        <div id="betaAdjustedTable" class="table-wrap tall"></div>
+      </section>
+    </section>
+
+    <section class="panel paper-board-panel">
+      <div class="panel-head"><h2>Paper trading board</h2><span class="muted">$1,000 S2 ledger · paper only · Alpaca optional</span></div>
+      <div id="paperBoard" class="paper-board"></div>
+    </section>
+
+    <section class="wide-grid">
+      <section class="panel">
+        <div class="panel-head"><h2>Live prediction state</h2><span class="muted">searchable · lazy rendered · display only</span></div>
+        <div id="liveTable" class="table-wrap tall"></div>
+      </section>
+      <section class="panel">
+        <div class="panel-head"><h2>Source health</h2><span class="muted">schema/provenance audit</span></div>
+        <div id="sourceHealth" class="table-wrap tall"></div>
+      </section>
+    </section>
+  </main>
+  <script src="https://cdn.jsdelivr.net/npm/echarts@5/dist/echarts.min.js"></script>
+  <script src="assets/app.js"></script>
+</body>
+</html>

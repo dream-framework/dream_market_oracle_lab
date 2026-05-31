@@ -1,0 +1,53 @@
+# Strict public GitHub Pages artifact sources.
+# No repo-tree assumptions, no dummy data, no page scraping.
+# Fast-build policy: do not fetch huge raw quote files; prediction_state is optional fallback only.
+cycle:
+  base_url: "https://dream-framework.github.io/s2_event_horizon_cycle/"
+  required_artifacts:
+    - path: "data/cycles.json"
+      kind: "cycle_archive"
+    - path: "data/history.json"
+      kind: "cycle_history"
+    - path: "data/news_s2.json"
+      kind: "cycle_active"
+
+market:
+  base_url: "https://dream-framework.github.io/s2_signal_lab/"
+  required_artifacts:
+    - path: "data/prediction_scorecard.csv"
+      kind: "prediction_scorecard"
+    - path: "data/model_comparison.json"
+      kind: "model_comparison"
+    - path: "data/live_predictions.csv"
+      kind: "live_predictions"
+  optional_artifacts:
+    - path: "data/prediction_state.csv"
+      kind: "prediction_state"
+      disabled_by_default: true
+      reason: "large state file; only enable if compact scorecard is unavailable"
+    - path: "data/fetch_manifest.json"
+      kind: "fetch_manifest"
+
+analysis:
+  # Current upstream cycle artifacts still show legacy beta floor-lock at 0.35.
+  # The combined app audits that legacy floor. The upstream cycle app must be refit
+  # with the expanded grid below for exact beta to be trusted.
+  beta_floor_watch: 0.35
+  legacy_beta_floor_watch: 0.35
+  expanded_beta_min: 0.10
+  expanded_beta_grid: [0.10, 0.12, 0.15, 0.18, 0.20, 0.22, 0.25, 0.28, 0.30, 0.32, 0.35, 0.40, 0.45, 0.55, 0.65, 0.75, 0.85, 1.00, 1.15, 1.35, 1.50, 1.75, 2.00, 2.25]
+  beta_floor_warning_share: 0.75
+  min_delta_aic: 6.0
+  max_dust: 0.35
+  min_pressure_for_signal: 10.0
+  diagnostic_horizons: ["h1", "1", "1d"]
+  primary_horizons: ["h5", "h10", "h20", "5", "10", "20"]
+  poll_minutes: 10
+  theater_news_samples: 4
+
+fetch:
+  timeout_seconds: 25
+  # Required upstream artifacts are not byte-capped. Some scored CSVs are large.
+  # The workflow is bounded by request timeouts + step timeout instead.
+  max_bytes_required: 0
+  max_bytes_optional: 12000000

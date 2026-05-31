@@ -1,0 +1,82 @@
+name: Update and deploy S2 signal cycle lab
+
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: "*/30 * * * *"
+  push:
+    branches: ["main"]
+    paths:
+      - "index.html"
+      - "assets/**"
+      - "scripts/**"
+      - "config/**"
+      - ".github/workflows/update.yml"
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: pages
+  cancel-in-progress: true
+
+jobs:
+  build-deploy:
+    runs-on: ubuntu-latest
+    timeout-minutes: 14
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - name: Install dependencies
+        run: pip install -r requirements.txt
+      - name: Restore paper ledger state
+        uses: actions/cache/restore@v4
+        with:
+          path: data/state
+          key: s2-paper-ledger-${{ github.run_id }}
+          restore-keys: |
+            s2-paper-ledger-
+      - name: Build strict public-artifact bundle
+        timeout-minutes: 10
+        run: python -u scripts/build_bundle.py
+      - name: Update paper trading board
+        timeout-minutes: 3
+        env:
+          PAPER_STARTING_CASH: "1000"
+          PAPER_MAX_POSITION_NOTIONAL: "125"
+          PAPER_MAX_TOTAL_EXPOSURE: "400"
+          PAPER_LOCAL_FILL_ENABLED: "true"
+          ALPACA_PAPER_ENABLED: ${{ vars.ALPACA_PAPER_ENABLED }}
+          ALPACA_PAPER_KEY_ID: ${{ secrets.ALPACA_PAPER_KEY_ID }}
+          ALPACA_PAPER_SECRET_KEY: ${{ secrets.ALPACA_PAPER_SECRET_KEY }}
+          ALPACA_PAPER_BASE_URL: ${{ vars.ALPACA_PAPER_BASE_URL }}
+        run: python -u scripts/paper_trader.py
+      - name: Save paper ledger state
+        if: always()
+        uses: actions/cache/save@v4
+        with:
+          path: data/state
+          key: s2-paper-ledger-${{ github.run_id }}
+      - name: Upload generated data artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: s2-signal-cycle-derived-data
+          path: |
+            data/derived/*.json
+            data/state/*.json
+      - name: Configure Pages
+        uses: actions/configure-pages@v5
+      - name: Upload Pages artifact
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: "."
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4
